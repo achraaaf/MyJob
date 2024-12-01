@@ -103,7 +103,7 @@ class JobPostWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                calculateTimeDifference(jobPost.PostedDate),
+                calculateTimestamp(jobPost.PostedDate),
                 style: GoogleFonts.inter(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 12,

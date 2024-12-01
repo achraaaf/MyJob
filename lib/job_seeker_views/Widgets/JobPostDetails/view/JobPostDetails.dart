@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/Job_seeker/JobPosts/JobPostModel.dart';
-import 'package:flutter_application_1/job_seeker_views/Widgets/JobPostDetails/widgets/MoreDetailsWidget.dart';
-import 'package:flutter_application_1/job_seeker_views/Widgets/JobPostDetails/widgets/headerSectionWidget.dart';
-import 'package:flutter_application_1/job_seeker_views/Widgets/application/view/ApplyByCVview.dart';
+import 'package:MyJob/Models/JobPosts/JobPostModel.dart';
+import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
+import 'package:MyJob/job_seeker_views/Widgets/JobPostDetails/widgets/MoreDetailsWidget.dart';
+import 'package:MyJob/job_seeker_views/Widgets/JobPostDetails/widgets/headerSectionWidget.dart';
+import 'package:MyJob/job_seeker_views/pages/Applications/view/ApplyByCVview.dart';
+import 'package:MyJob/Repositories/Chat/chatRepository.dart';
+import 'package:MyJob/job_seeker_views/pages/Messages/controller/messagesController.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class jobPostDetails extends StatelessWidget {
   final JobPostModel jobPost;
   jobPostDetails({required this.jobPost, super.key});
 
+  final currentUser = AuthenticationRepository.instance.authUser!.uid;
+  final controller = Get.put(MessagesController());
+
   @override
   Widget build(BuildContext context) {
+    GlobalKey<FormState> KeyForApply = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -54,20 +64,23 @@ class jobPostDetails extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(bottom: 20, left: 5, right: 5),
                 child: Container(
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                      color: Colors.white,
-                      spreadRadius: 50,
-                      blurRadius: 30,
-                      offset: Offset(0, 15),
-                    ),
-                  ]),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white,
+                        spreadRadius: 50,
+                        blurRadius: 30,
+                        offset: Offset(0, 15),
+                      ),
+                    ],
+                  ),
                   child: Row(
                     children: [
                       Expanded(
                         child: SizedBox(
                           height: 50,
                           child: FloatingActionButton(
+                            heroTag: 'hero1',
                             backgroundColor: Colors.black,
                             onPressed: () {
                               Navigator.push(
@@ -75,6 +88,7 @@ class jobPostDetails extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) => ApplyWithCVview(
                                           jobPost: jobPost,
+                                          applyWithCVFormKey: KeyForApply,
                                         )),
                               );
                             },
@@ -97,8 +111,23 @@ class jobPostDetails extends StatelessWidget {
                         child: SizedBox(
                           height: 50,
                           child: FloatingActionButton(
+                            heroTag: 'hero2',
                             backgroundColor: Colors.white,
-                            onPressed: () {},
+                            onPressed: () async {
+                              final chatRepo = Get.put(ChatRepository());
+                              await chatRepo.createChatConversation(
+                                  jobSeekerId: currentUser,
+                                  employerId: jobPost.employerId);
+                              controller.getConversations();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BottomNavigationBarJobseeker(
+                                          wantedPage: 3),
+                                ),
+                              );
+                            },
                             child: Text(
                               "Send Message",
                               style: GoogleFonts.poppins(

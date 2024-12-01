@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/Job_seeker/JobPosts/JobPostModel.dart';
-import 'package:flutter_application_1/Models/Job_seeker/jobApplication/JobApplication.dart';
+import 'package:MyJob/Models/jobApplication/JobApplication.dart';
 import 'package:get/get.dart';
 
 class JobApplicationRepostory extends GetxController {
@@ -11,7 +10,7 @@ class JobApplicationRepostory extends GetxController {
   final _db = FirebaseFirestore.instance;
 
   // Apply by CV/Resume
-  Future<bool> ApplyByCV(
+  Future<String> ApplyByCV(
       String JobSeekerId,
       String jobPostId,
       String name,
@@ -19,6 +18,7 @@ class JobApplicationRepostory extends GetxController {
       String cv,
       String motivationLetter,
       BuildContext context) async {
+  
     final snapshot = await _db
         .collection("applicationJobs")
         .where('JobSeekerId', isEqualTo: JobSeekerId)
@@ -28,9 +28,9 @@ class JobApplicationRepostory extends GetxController {
     if (snapshot.size > 0) {
       Get.snackbar("Error", "You have already applied for this Job!",
           backgroundColor: Colors.red, colorText: Colors.white);
-      return false;
+      return "";
     } else {
-      await _db.collection("applicationJobs").add({
+      final doc = await _db.collection("applicationJobs").add({
         "jobPostId": jobPostId,
         "JobSeekerId": JobSeekerId,
         "applicationDate": DateTime.now().toString(),
@@ -42,7 +42,8 @@ class JobApplicationRepostory extends GetxController {
       });
       Get.snackbar("Success", "Application submitted successfully!",
           backgroundColor: Colors.green, colorText: Colors.white);
-      return true;
+
+      return doc.id;
     }
   }
 
@@ -52,7 +53,6 @@ class JobApplicationRepostory extends GetxController {
         .where('JobSeekerId', isEqualTo: JobSeekerId)
         .get();
 
- 
     final JobApplicationsList =
         snapshot.docs.map((e) => JobApplication.fromSnapshot(e)).toList();
 

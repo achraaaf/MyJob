@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/profile/Work_Experience/Widgets/AddWorkExperienceFrom.dart';
+import 'package:MyJob/job_seeker_views/pages/profile/Work_Experience/Widgets/AddWorkExperienceFrom.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class addWorkExperienceScreen extends StatelessWidget {
-  const addWorkExperienceScreen({super.key});
+  final GlobalKey<FormState> addWorkExperienceFormKey;
+  const addWorkExperienceScreen(
+      {super.key, required this.addWorkExperienceFormKey});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class addWorkExperienceScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              workExperienceForm()
+              workExperienceForm(formkey: addWorkExperienceFormKey)
             ],
           ),
         ),

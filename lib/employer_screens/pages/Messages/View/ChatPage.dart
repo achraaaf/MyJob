@@ -1,8 +1,8 @@
-
 import 'dart:async';
 
 import 'package:MyJob/Models/Job_seeker/Job_seeker.dart';
 import 'package:MyJob/employer_screens/pages/Messages/Controller/EmployerMessageController.dart';
+import 'package:MyJob/employer_screens/pages/Search/View/JobSeekerDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:MyJob/Models/Conversation.dart';
@@ -10,6 +10,7 @@ import 'package:MyJob/Repositories/Chat/chatRepository.dart';
 import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
 import 'package:MyJob/job_seeker_views/pages/Messages/widgets/Chat_bubble.dart';
 import 'package:MyJob/job_seeker_views/pages/Messages/widgets/DisplayImageMessage.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
@@ -92,14 +93,33 @@ class _ChatPageState extends State<ChatPage> {
                   SizedBox(
                     width: 4,
                   ),
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(widget.JobSeeker.profilePicture),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(widget.JobSeeker.name)
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(
+                          () => JobSeekerDetails(jobSeeker: widget.JobSeeker));
+                    },
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage:
+                              NetworkImage(widget.JobSeeker.profilePicture),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          widget.JobSeeker.name,
+                          style: TextStyle(
+                            fontFamily: 'Satoshi',
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
               Expanded(child: _buildMessageList(controller)),
@@ -193,14 +213,15 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget UserInput(EmployerMessagesController controller, BuildContext context) {
+  Widget UserInput(
+      EmployerMessagesController controller, BuildContext context) {
     return Row(
       children: [
         Expanded(
             child: TextFormField(
           controller: controller.messageController,
           decoration: InputDecoration(
-              hintText: "Write Your Message",
+              hintText: "Écrivez votre message",
               hintStyle: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
@@ -216,8 +237,8 @@ class _ChatPageState extends State<ChatPage> {
               prefixIcon: Icon(Iconsax.message),
               suffixIcon: IconButton(
                   onPressed: () {
-                    controller.uploadImage(
-                        widget.conversation.Id, widget.conversation.JobSeekerId);
+                    controller.uploadImage(widget.conversation.Id,
+                        widget.conversation.JobSeekerId);
                   },
                   icon: Icon(Iconsax.image)),
               contentPadding: EdgeInsets.symmetric(horizontal: 15)),
@@ -248,4 +269,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-

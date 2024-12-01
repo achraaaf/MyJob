@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/Job_seeker/JobPosts/JobPostModel.dart';
+import 'package:MyJob/Models/JobPosts/JobPostModel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:photo_view/photo_view.dart';
 
 class MoreDetails extends StatelessWidget {
   const MoreDetails({
-    super.key,
+    Key? key,
     required this.jobPost,
-  });
+  }) : super(key: key);
 
   final JobPostModel jobPost;
 
@@ -18,7 +19,7 @@ class MoreDetails extends StatelessWidget {
         // ============= Job Description ============
 
         Text(
-          "Job Description",
+          "Description de l'emploi",
           style: GoogleFonts.poppins(
             letterSpacing: -0.5,
             fontSize: 20,
@@ -34,7 +35,7 @@ class MoreDetails extends StatelessWidget {
         ),
         SizedBox(height: 15),
         Text(
-          "Requirements",
+          "Exigences",
           style: GoogleFonts.poppins(
             letterSpacing: -0.5,
             fontSize: 20,
@@ -50,7 +51,7 @@ class MoreDetails extends StatelessWidget {
         ),
         SizedBox(height: 15),
         Text(
-          "Required Skills",
+          "Compétences requises",
           style: GoogleFonts.poppins(
             letterSpacing: -0.5,
             fontSize: 20,
@@ -105,41 +106,11 @@ class MoreDetails extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (context) => Dialog.fullscreen(
-                                    child: SafeArea(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 20),
-                                            child: IconButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              icon: Image(
-                                                image: AssetImage(
-                                                    "images/left-arrow.png"),
-                                              ),
-                                            ),
-                                          ),
-                                          Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 10),
-                                              child: Image(
-                                                  image: NetworkImage(
-                                                      jobPost.Photos[index])),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
+                            builder: (context) => PhotoView(
+                              imageProvider:
+                                  NetworkImage(jobPost.Photos[index]),
+                            ),
+                          ),
                         );
                       },
                       child: ClipRRect(
@@ -154,9 +125,9 @@ class MoreDetails extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 100)
             ],
           ),
+        SizedBox(height: 100)
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:MyJob/Models/Job_seeker/Job_seeker.dart';
@@ -23,11 +24,31 @@ class EmployerMessagesController extends GetxController {
 
   TextEditingController messageController = TextEditingController();
 
+  StreamSubscription<Conversation>? conversationSubscription;
+
   @override
   void onInit() {
     super.onInit();
-    
+
     getConversations();
+    conversationSubscription = chatRepo
+        .listenForNewConversations(currentUser)
+        .listen((conversation) async {
+      if (!Conversations.any((c) => c.Id == conversation.Id)) {
+        Conversations.add(conversation);
+        final jobSeekerData =
+            await userRepo.getJobSeekerDataById(conversation.JobSeekerId);
+        if (!JobSeekerInfos.any((existjs) => existjs.id == jobSeekerData.id)) {
+          JobSeekerInfos.add(jobSeekerData);
+        }
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    conversationSubscription?.cancel();
   }
 
   void getConversations() async {
@@ -37,8 +58,7 @@ class EmployerMessagesController extends GetxController {
       for (var conversation in Conversations) {
         final jobSeekerData =
             await userRepo.getJobSeekerDataById(conversation.JobSeekerId);
-        if (!JobSeekerInfos.any(
-            (existEmp) => existEmp.id == jobSeekerData.id)) {
+        if (!JobSeekerInfos.any((existjs) => existjs.id == jobSeekerData.id)) {
           JobSeekerInfos.add(jobSeekerData);
         }
       }
@@ -57,6 +77,11 @@ class EmployerMessagesController extends GetxController {
       await chatRepo.sendMessage(
           ConversationId, ReceiverId, messageController.text, false);
       messageController.clear();
+      Conversations[Conversations.indexWhere((c) => c.Id == ConversationId)]
+          .lastMessageTime = Timestamp.now();
+
+      Conversations.sort(
+          (a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
     }
   }
 

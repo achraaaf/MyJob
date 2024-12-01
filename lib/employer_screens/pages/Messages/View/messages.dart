@@ -1,6 +1,7 @@
 import 'package:MyJob/employer_screens/Employer_Home.dart';
 import 'package:MyJob/employer_screens/pages/Messages/Controller/EmployerMessageController.dart';
 import 'package:MyJob/employer_screens/pages/Messages/View/ChatPage.dart';
+import 'package:MyJob/employer_screens/pages/Search/View/JobSeekerDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:MyJob/job_seeker_views/pages/Messages/widgets/NoMessagesWidget.dart';
 import 'package:MyJob/job_seeker_views/pages/Messages/widgets/UnseenMessages.dart';
@@ -10,14 +11,24 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
-class Messages extends StatelessWidget {
+class Messages extends StatefulWidget {
   const Messages({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(EmployerMessagesController());
-    controller.getConversations();
+  State<Messages> createState() => _MessagesState();
+}
 
+class _MessagesState extends State<Messages> {
+  final controller = Get.put(EmployerMessagesController());
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -64,9 +75,12 @@ class Messages extends StatelessWidget {
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: controller.Conversations.length,
+                    itemCount: controller.JobSeekerInfos.length,
                     itemBuilder: (Context, index) {
                       final conversation = controller.Conversations[index];
+                      if (controller.JobSeekerInfos.isEmpty) {
+                        return Center(child: CircularProgressIndicator());
+                      }
                       final jobseeker = controller.JobSeekerInfos.firstWhere(
                           (js) => js.id == conversation.JobSeekerId);
 
@@ -90,12 +104,18 @@ class Messages extends StatelessWidget {
                               borderRadius: BorderRadius.circular(17)),
                           child: Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: CircleAvatar(
-                                  radius: 26,
-                                  backgroundImage:
-                                      NetworkImage(jobseeker.profilePicture),
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(() =>
+                                      JobSeekerDetails(jobSeeker: jobseeker));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: CircleAvatar(
+                                    radius: 26,
+                                    backgroundImage:
+                                        NetworkImage(jobseeker.profilePicture),
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 10),

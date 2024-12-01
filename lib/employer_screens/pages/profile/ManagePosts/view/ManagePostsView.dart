@@ -119,7 +119,7 @@ class ManagePostsView extends StatelessWidget {
                                 SizedBox(height: 6),
                                 Text(JobSalary),
                                 SizedBox(height: 5),
-                                Text(calculateTimeDifference(post.PostedDate))
+                                Text(calculateTimestamp(post.PostedDate))
                               ],
                             ),
                           ),

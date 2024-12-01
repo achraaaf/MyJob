@@ -1,10 +1,7 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/profile/skills/addSkill.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/profile/skills/editSkills.dart';
+import 'package:MyJob/job_seeker_views/pages/profile/skills/view/addSkill.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:page_transition/page_transition.dart';
 
 class SkillsWidget extends StatelessWidget {
   final List skills;
@@ -21,103 +18,97 @@ class SkillsWidget extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.08,
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 73, 73, 73)
-                    .withOpacity(0.10000000149011612),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 1.5,
+                    blurRadius: 10,
+                    offset: Offset(2, 1),
+                  )
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    ImageIcon(
-                      AssetImage("images/IconSkill.png"),
-                      color: Colors.green,
-                    ),
-                    SizedBox(width: 13),
-                    Text(
-                      'Skills',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Spacer(),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => addSkill(),
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    child: Row(
+                      children: [
+                        ImageIcon(
+                          AssetImage("images/IconSkill.png"),
+                          color: Colors.green,
+                        ),
+                        SizedBox(width: 13),
+                        Text(
+                          'Compétences',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
                           ),
-                        );
-                      },
-                      icon: Icon(Iconsax.add_circle4),
-                      iconSize: 30,
+                        ),
+                        Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => addSkill(),
+                              ),
+                            );
+                          },
+                          icon: Icon(Iconsax.edit),
+                          iconSize: 25,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  if (skills.isNotEmpty)
+                    Column(
+                      children: [
+                        Divider(
+                          color: Color(0xFFDEE1E7),
+                          height: 3,
+                          thickness: 0.8,
+                          indent: 20,
+                          endIndent: 20,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Wrap(
+                              spacing: 10,
+                              children: [
+                                for (String item in skills)
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 13, horizontal: 30),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color(0xFF171E30),
+                                    ),
+                                    child: Text(
+                                      item,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
           ),
           SizedBox(height: 4),
-          if (skills.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 73, 73, 73)
-                          .withOpacity(0.10000000149011612),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Wrap(
-                        spacing: 10,
-                        children: [
-                          for (String item in skills)
-                            Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 13, horizontal: 30),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color(0xFF1E1F1E),
-                              ),
-                              child: Text(
-                                item,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: editSkills(),
-                          ),
-                        );
-                      },
-                      icon: Icon(Iconsax.edit),
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );

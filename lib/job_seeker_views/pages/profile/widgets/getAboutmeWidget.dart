@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:MyJob/job_seeker_views/Controllers/JobSeekerController.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
 class AboutMeWidget extends StatelessWidget {
   final String? aboutMe;
 
-  const AboutMeWidget({Key? key, required this.aboutMe, required this.onEditPressed}) : super(key: key);
+  const AboutMeWidget(
+      {Key? key, required this.aboutMe, required this.onEditPressed})
+      : super(key: key);
 
   final VoidCallback onEditPressed;
   @override
   Widget build(BuildContext context) {
+    final controller = JobSeekerController.instance;
     return Container(
-      margin: EdgeInsets.only(bottom: 18, top: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.08,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 73, 73, 73)
-                    .withOpacity(0.10000000149011612),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+      margin: EdgeInsets.only(bottom: 18, top: 5),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 1.5,
+                blurRadius: 10,
+                offset: Offset(2, 1),
+              )
+            ],
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                 child: Row(
                   children: [
                     Icon(
@@ -35,7 +46,7 @@ class AboutMeWidget extends StatelessWidget {
                     ), // Change to your own icon
                     SizedBox(width: 13),
                     Text(
-                      'About Me',
+                      'À propos de moi',
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -49,33 +60,37 @@ class AboutMeWidget extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ),
-          SizedBox(height: 4),
-          if (aboutMe != null && aboutMe!.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 73, 73, 73)
-                      .withOpacity(0.10000000149011612),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Text(
-                    aboutMe!,
-                    style: GoogleFonts.inter(
-                      color: Color(0xFF514A6B),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+              if (aboutMe != null && aboutMe!.isNotEmpty)
+                Obx(
+                  () => Column(
+                    children: [
+                      Divider(
+                        color: Color(0xFFDEE1E7),
+                        height: 3,
+                        thickness: 0.8,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            controller.jobSeeker.value.AboutMe.trim(),
+                            style: GoogleFonts.inter(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

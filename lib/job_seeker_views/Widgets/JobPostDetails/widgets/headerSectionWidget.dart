@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Models/Job_seeker/JobPosts/JobPostModel.dart';
-import 'package:flutter_application_1/utils/Time/CalculateTime.dart';
+import 'package:MyJob/Models/JobPosts/JobPostModel.dart';
+import 'package:MyJob/utils/Time/CalculateTime.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class headerSection extends StatelessWidget {
@@ -16,6 +15,9 @@ class headerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final salary =
+        double.tryParse(jobPost.jobSalary.replaceAll(RegExp(r'[^\d.]'), ''));
+    String JobSalary = '\$${(salary! ~/ 1000)}K /Month';
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,9 +28,9 @@ class headerSection extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width / 3.5,
             height: MediaQuery.of(context).size.height / 7,
-            padding: EdgeInsets.all(25),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Color(0xffF5F1FB),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
@@ -42,7 +44,7 @@ class headerSection extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image(
-                image: AssetImage("images/paypal.png"),
+                image: NetworkImage(jobPost.EmployerImage),
                 fit: BoxFit.contain,
               ),
             ),
@@ -90,7 +92,7 @@ class headerSection extends StatelessWidget {
           ),
           // ======= jobSalary =======
           Text(
-            jobPost.jobSalary,
+            JobSalary,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               letterSpacing: -0.5,
@@ -128,7 +130,7 @@ class headerSection extends StatelessWidget {
           ),
           // ========= post date =========
           Text(
-            "Posted ${calculateTimeDifference(jobPost.PostedDate)}",
+            "Posted ${calculateTimestamp(jobPost.PostedDate)}",
             style: GoogleFonts.inter(
               color: Colors.black.withOpacity(0.8),
               fontSize: 14,
@@ -140,4 +142,3 @@ class headerSection extends StatelessWidget {
     );
   }
 }
-

@@ -1,4 +1,9 @@
 import 'package:MyJob/Authentication/SignIn_Up.dart';
+import 'package:MyJob/Repositories/Chat/chatRepository.dart';
+import 'package:MyJob/Repositories/user/User_Repository.dart';
+import 'package:MyJob/employer_screens/Controller/EmployerController.dart';
+import 'package:MyJob/employer_screens/Home/controller/DataController.dart';
+import 'package:MyJob/employer_screens/Home/controller/notificationController.dart';
 import 'package:MyJob/employer_screens/pages/profile/ManagePosts/view/ManagePostsView.dart';
 import 'package:MyJob/employer_screens/pages/profile/editProfile/view/EditProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +14,7 @@ import 'package:iconsax/iconsax.dart';
 
 class OptionsSection extends StatelessWidget {
   const OptionsSection({
-    super.key,
+    Key? key,
   });
 
   @override
@@ -27,7 +32,7 @@ class OptionsSection extends StatelessWidget {
           ListTile(
             leading: Icon(Iconsax.user),
             title: Text(
-              'Edit Profile',
+              'Modifier le profil',
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 18,
@@ -36,7 +41,7 @@ class OptionsSection extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              "change profile picture, number, email",
+              "changer la photo de profil, le numéro, l'e-mail",
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 13,
@@ -53,7 +58,7 @@ class OptionsSection extends StatelessWidget {
           ListTile(
             leading: Icon(Iconsax.briefcase),
             title: Text(
-              'Manage Posts',
+              'Gérer les publications',
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 18,
@@ -62,7 +67,7 @@ class OptionsSection extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              "Post, Edit, and Track Your Openings",
+              "Publier, modifier et suivre vos offres d'emploi",
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 13,
@@ -82,32 +87,9 @@ class OptionsSection extends StatelessWidget {
             contentPadding: EdgeInsets.all(0),
           ),
           ListTile(
-            leading: Icon(Iconsax.setting),
-            title: Text(
-              'Settings',
-              style: GoogleFonts.poppins(
-                textStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            subtitle: Text(
-              "Update Profile, Security, and Preferences",
-              style: GoogleFonts.poppins(
-                textStyle: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            trailing: Icon(Iconsax.arrow_right_34),
-            contentPadding: EdgeInsets.all(0),
-          ),
-          ListTile(
             leading: Icon(Icons.logout),
             title: Text(
-              'Log out',
+              'Se déconnecter',
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 18,
@@ -116,7 +98,7 @@ class OptionsSection extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              "Securely log out of Account",
+              "Déconnectez-vous en toute sécurité du compte",
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 13,
@@ -127,92 +109,114 @@ class OptionsSection extends StatelessWidget {
             trailing: Icon(Iconsax.arrow_right_34),
             contentPadding: EdgeInsets.all(0),
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.white,
-                      title: Center(
-                        child: Text(
-                          'Log Out',
-                          style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      content: Container(
-                        height: 200,
-                        child: Column(
+              showModalBottomSheet(
+                context: context,
+                barrierColor: Color(0xFF7E8488).withOpacity(0.5),
+                builder: (BuildContext context) {
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
                           children: [
-                            Text(
-                              'Are you sure you want to log out?',
-                              style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color.fromARGB(255, 94, 94, 94),
-                                ),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                FirebaseAuth.instance.signOut();
-                                Get.offAll(() => signin_up());
-                              },
-                              child: Text(
-                                "Yes, Log Out",
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
+                            Spacer(),
+                            Container(
+                              height: 4,
+                              width: 60,
+                              decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 50, vertical: 13),
-                              ),
+                                  color: Colors.grey),
                             ),
-                            SizedBox(height: 10),
-                            OutlinedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "Cancel",
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                side: BorderSide(
-                                  color: Colors.grey,
-                                  width: 0.5,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 50, vertical: 13),
-                              ),
-                            ),
+                            Spacer()
                           ],
                         ),
-                      ),
-                    );
-                  });
+
+                        SizedBox(height: 10),
+                        Text(
+                          'Déconnexion ?',
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Êtes-vous sûr de vouloir vous déconnecter?',
+                          style: GoogleFonts.poppins(
+                            color: Color(0xFF514A6B),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Container(
+                          height: 60,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              FirebaseAuth.instance.signOut();
+
+                              FirebaseAuth.instance.signOut();
+
+                              Get.delete<EmployerController>(force: true);
+                              Get.delete<UserRepository>();
+                              Get.delete<ChatRepository>();
+                              Get.delete<DataController>();
+                              Get.delete<ChatRepository>();
+                              Get.delete<notificationsController>();
+                              Get.delete<ChatRepository>();
+
+                              Get.offAll(() => signin_up());
+                            },
+                            child: Text(
+                              'Oui, déconnectez-vous !',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 60,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Annuler !',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Color(0xFFD7CDFF),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20)
+                      ],
+                    ),
+                  );
+                },
+              );
             },
           ),
         ],

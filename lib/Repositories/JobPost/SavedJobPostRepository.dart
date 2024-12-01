@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/Controllers/JobSeekerController.dart';
-import 'package:flutter_application_1/Models/Job_seeker/JobPosts/JobPostModel.dart';
-import 'package:flutter_application_1/Repositories/authentication/authentication_Repository.dart';
+import 'package:MyJob/Models/JobPosts/JobPostModel.dart';
+import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
 import 'package:get/get.dart';
 
 class savedJobPostRepository extends GetxController {

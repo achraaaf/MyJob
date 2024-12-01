@@ -11,13 +11,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
-class NotificationCardJ extends StatefulWidget {
+// ignore: must_be_immutable
+class NotificationCardJ extends StatelessWidget {
   final String title;
   final String content;
   final Timestamp timestamp;
   final String employerId;
   final String jobApplicationId;
-  const NotificationCardJ(
+  NotificationCardJ(
       {super.key,
       required this.title,
       required this.content,
@@ -25,42 +26,37 @@ class NotificationCardJ extends StatefulWidget {
       required this.employerId,
       required this.jobApplicationId});
 
-  @override
-  State<NotificationCardJ> createState() => _NotificationCardJState();
-}
+  String get formattedTimestamp => timestamp.toDate().toString();
 
-class _NotificationCardJState extends State<NotificationCardJ> {
-  String get formattedTimestamp => widget.timestamp.toDate().toString();
   late Employer employer;
+
   late JobApplication jobApplication;
+
   late JobPostModel jobPost;
+
   final UserRepo = UserRepository.Instance;
 
-  late NotificationsControllerJ controller;
+  final controller = Get.put(NotificationsControllerJ());
 
-  @override
-  void initState() {
-    super.initState();
-    controller = Get.put(NotificationsControllerJ());
-    fetchData();
-  }
+  //fetchData();
 
   fetchData() async {
-    employer = await controller.fetchEmployerDetails(widget.employerId);
+    employer = await controller.fetchEmployerDetails(employerId);
     jobApplication =
-        await controller.fetchJobApplicationDetails(widget.jobApplicationId);
+        await controller.fetchJobApplicationDetails(jobApplicationId);
     jobPost = await controller.fetchJobPostDetails(jobApplication.JobPostId);
   }
 
   bool isNotificationNew() {
     final now = DateTime.now();
-    final notificationTime = widget.timestamp.toDate();
+    final notificationTime = timestamp.toDate();
     final difference = now.difference(notificationTime);
     return difference.inMinutes <= 10;
   }
 
   @override
   Widget build(BuildContext context) {
+    fetchData();
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       shape: RoundedRectangleBorder(
@@ -85,7 +81,7 @@ class _NotificationCardJState extends State<NotificationCardJ> {
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            widget.title,
+                            title,
                             style: TextStyle(
                               fontFamily: 'Satoshi',
                               fontSize: 17,
@@ -115,7 +111,7 @@ class _NotificationCardJState extends State<NotificationCardJ> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      widget.content,
+                      content,
                       style: TextStyle(
                           fontSize: 16,
                           fontFamily: 'Satoshi',

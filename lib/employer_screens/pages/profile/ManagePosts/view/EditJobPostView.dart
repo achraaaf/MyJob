@@ -234,7 +234,7 @@ class _EditJobPostViewState extends State<EditJobPostView> {
                       double.tryParse(controller.JobSalaryController.value) ??
                           0.0,
                   min: 0,
-                  max: 100000,
+                  max: 50000,
                   showLabels: true,
                   shouldAlwaysShowTooltip: true,
                   numberFormat: NumberFormat.compactCurrency(

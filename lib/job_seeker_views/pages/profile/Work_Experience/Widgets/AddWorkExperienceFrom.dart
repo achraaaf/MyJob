@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/profile/Work_Experience/Controller/workExperienceController.dart';
-import 'package:flutter_application_1/utils/validators/workExperienceValidator.dart';
+import 'package:MyJob/job_seeker_views/pages/profile/Work_Experience/Controller/workExperienceController.dart';
+import 'package:MyJob/utils/validators/workExperienceValidator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class workExperienceForm extends StatelessWidget {
-  const workExperienceForm({
+  final GlobalKey<FormState> formkey;
+  workExperienceForm({
     super.key,
+    required this.formkey,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(workExperienceController());
+
     return Form(
-        key: controller.WorkExperienceFormKey,
+        key: formkey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -121,12 +124,13 @@ class workExperienceForm extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            SaveButton(context, controller),
+            SaveButton(context, controller, formkey),
           ],
         ));
   }
 
-  Center SaveButton(BuildContext context, workExperienceController controller) {
+  Center SaveButton(BuildContext context, workExperienceController controller,
+      GlobalKey<FormState> formkey) {
     return Center(
       child: Container(
         height: 60,
@@ -140,7 +144,7 @@ class workExperienceForm extends StatelessWidget {
               'End_date': controller.EndDate.text,
               'description': controller.Description.text,
             };
-            controller.addWorkExperience(context, workExperienceData);
+            controller.addWorkExperience(context, workExperienceData, formkey);
           },
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(

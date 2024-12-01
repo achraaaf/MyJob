@@ -1,46 +1,58 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Authentication/Sign_up/Controller/SignUpController.dart';
-import 'package:flutter_application_1/Authentication/Sign_up/widgets/TextFieldForm.dart';
-import 'package:flutter_application_1/Authentication/login.dart';
-import 'package:flutter_application_1/utils/validators/SignUpValidation.dart';
+import 'package:MyJob/Authentication/Controller/AuthController.dart';
+import 'package:MyJob/Authentication/Login/view/LoginScreen.dart';
+import 'package:MyJob/Authentication/Sign_up/widgets/TextFieldForm.dart';
+import 'package:MyJob/utils/validators/SignUpValidation.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-class SignUpForm extends StatelessWidget {
+class SignUpForm extends StatefulWidget {
+  final BuildContext parentContext;
   final SelectedUserTypeScreen;
-  const SignUpForm({super.key, required this.SelectedUserTypeScreen});
+  const SignUpForm(
+      {super.key,
+      required this.SelectedUserTypeScreen,
+      required this.parentContext});
+
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  GlobalKey<FormState> signupFormkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SignUpController());
-    controller.selectedUserType = SelectedUserTypeScreen;
+    final controller = AuthController.instance;
+    controller.selectedUserType = widget.SelectedUserTypeScreen;
+
     return Form(
-      key: controller.signupFormkey,
-      //autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: Column(
-        children: [
-          SizedBox(height: 10),
-          // ========= Full Name =========
-          TextFieldForm(
-              hintText: "Full Name",
-              prefixIcon: Iconsax.user,
-              obsecuretext: false,
-              controller: controller.Name,
-              validationCallback: (value) => Validation.ValidateName(value)),
-          SizedBox(height: 15),
-          // ========= Email =========
-          TextFieldForm(
-              hintText: "Your Email",
-              prefixIcon: Iconsax.sms_tracking,
-              obsecuretext: false,
-              controller: controller.Email,
-              validationCallback: (value) => Validation.ValidateEmail(
-                  value, controller.isAlreadyUsed.value)),
-          SizedBox(height: 15),
-          Obx(
-            () => TextFieldForm(
-                hintText: "Password",
+      key: signupFormkey,
+      child: Obx(() {
+        return Column(
+          children: [
+            SizedBox(height: 10),
+            // ========= Nom complet =========
+            TextFieldForm(
+                hintText: widget.SelectedUserTypeScreen == "employer"
+                    ? "Nom de l'entreprise"
+                    : "Nom complet",
+                prefixIcon: Iconsax.user,
+                obsecuretext: false,
+                controller: controller.Name,
+                validationCallback: (value) => Validation.ValidateName(value)),
+            SizedBox(height: 15),
+            // ========= Email =========
+            TextFieldForm(
+                hintText: "Votre Email",
+                prefixIcon: Iconsax.sms_tracking,
+                obsecuretext: false,
+                controller: controller.Email,
+                validationCallback: (value) => Validation.ValidateEmail(value)),
+            SizedBox(height: 15),
+            TextFieldForm(
+                hintText: "Mot de passe",
                 prefixIcon: Iconsax.password_check,
                 sufixIcon: Iconsax.eye_slash,
                 obsecuretext: controller.hidePassword.value,
@@ -49,11 +61,10 @@ class SignUpForm extends StatelessWidget {
                     Validation.ValidatePassword(value),
                 hideShowPassword: () => controller.hidePassword.value =
                     !controller.hidePassword.value),
-          ),
-          SizedBox(height: 15),
-          Obx(
-            () => TextFieldForm(
-                hintText: "Confirm Password",
+
+            SizedBox(height: 15),
+            TextFieldForm(
+                hintText: "Confirmer le mot de passe",
                 prefixIcon: Iconsax.password_check,
                 sufixIcon: Iconsax.eye_slash,
                 obsecuretext: controller.hidePassword.value,
@@ -63,49 +74,50 @@ class SignUpForm extends StatelessWidget {
                         value, controller.Password.text),
                 hideShowPassword: () => controller.hidePassword.value =
                     !controller.hidePassword.value),
-          ),
 
-          SizedBox(
-            height: 20,
-          ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Already an account ? ',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    color: const Color.fromARGB(255, 99, 99, 99),
-                    fontSize: 16,
-                  ),
-                ),
-                TextSpan(
-                  text: 'Login',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Login(),
-                        ),
-                      );
-                    },
-                ),
-              ],
+            SizedBox(
+              height: 20,
             ),
-          ),
-          SizedBox(height: 10),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Déjà un compte ? ',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: const Color.fromARGB(255, 99, 99, 99),
+                      fontSize: 16,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'Connexion',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
 
-          /// Sign Up Button
-          SignupButton(context, () => controller.signup(context)),
-        ],
-      ),
+            /// Bouton S'inscrire
+            SignupButton(context,
+                () => controller.signup(widget.parentContext, signupFormkey)),
+          ],
+        );
+      }),
     );
   }
 
@@ -119,10 +131,13 @@ class SignUpForm extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.9,
             child: ElevatedButton(
               onPressed: () {
+                if (!signupFormkey.currentState!.validate()) {
+                  return;
+                }
                 onPressed();
               },
               child: Text(
-                'Sign up',
+                'S\'inscrire',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: "Poppins",

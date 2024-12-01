@@ -1,147 +1,117 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Authentication/SelectedUserTypeScreen.dart';
-import 'package:flutter_application_1/Authentication/Sign_up.dart';
-import 'package:flutter_application_1/Authentication/Sign_up/Sign_Up.dart';
-import 'package:flutter_application_1/Authentication/login.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:MyJob/Authentication/Login/view/LoginScreen.dart';
+import 'package:MyJob/Authentication/SelectedUserTypeScreen.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class signin_up extends StatelessWidget {
-  const signin_up({super.key});
+  const signin_up({Key? key});
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 690),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (_, child) {
-        return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
-            ),
-            home: Scaffold(
-              body: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Container(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 15.h, horizontal: 12.w),
-                      child: Column(
-                        children: [
-                          Container(
-                              height: MediaQuery.of(context).size.height * 0.3,
-                              child:
-                                  Image(image: AssetImage("images/login.png"))),
-                          Text(
-                            "Welcom to",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40.sp),
-                          ),
-                          Text(
-                            "My Job!",
-                            style: TextStyle(
-                                color: Color(0xFFED4546),
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40.sp),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            child: Text(
-                              "  Discover career opportunities. Whether you're seeking challenges or hiring, we've got you covered. Choose below to begin!",
-                              style: GoogleFonts.poppins(
-                                color: Color(0xFF9BA7B2),
-                                fontSize: 19.sp,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: -0.10,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 8),
-                              height: 60.h,
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Login()),
-                                  );
-                                },
-                                child: Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.sp,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  primary: const Color.fromARGB(255, 0, 0, 0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 8),
-                              height: 55.h,
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            SelectedUserTypeScreen()),
-                                  );
-                                },
-                                child: Text(
-                                  'Register',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.sp,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  primary: const Color(0xFFAFAFAF),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Expanded(child: Lottie.asset("images/SignUpIn.json")),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              margin: EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.white,
               ),
-            ));
-      },
+              child: Column(
+                children: [
+                  Text("Bienvenue à",
+                      style: GoogleFonts.poppins(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                  Text(
+                    "My Job!",
+                    style: TextStyle(
+                        color: Color(0xFFED4546),
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 38),
+                  ),
+                  Text(
+                    "  Découvrez les opportunités de carrière. Que vous recherchiez des défis ou que vous embauchiez, nous avons ce qu'il vous faut. Choisissez ci-dessous pour commencer!",
+                    style: GoogleFonts.poppins(
+                      color: Color.fromARGB(255, 139, 139, 139),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.10,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Get.to(() => SelectedUserTypeScreen());
+                          },
+                          child: Text(
+                            "S'inscrire",
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.10,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            foregroundColor: Colors.white,
+                            side: BorderSide(
+                                color: Color(0xFF343434), width: 0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 13),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Get.to(() => LoginScreen());
+                          },
+                          child: Text(
+                            "S'identifier",
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.10,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.black,
+                              side: BorderSide(
+                                  color: Color(0xFF343434), width: 0.3),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 13)),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 15)
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

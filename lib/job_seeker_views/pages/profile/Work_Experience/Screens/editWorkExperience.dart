@@ -1,395 +1,254 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/job_seeker_Home.dart';
+import 'package:flutter/widgets.dart';
+import 'package:MyJob/Models/Job_seeker/workExperience.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
+import 'package:MyJob/job_seeker_views/pages/profile/Work_Experience/Controller/workExperienceController.dart';
+import 'package:get/get.dart';
+import 'package:MyJob/utils/validators/workExperienceValidator.dart';
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 
-class editWordExperience extends StatefulWidget {
-  final String jobTitle;
-  final String company;
-  final String start_date;
-  final String end_date;
-  final String description;
-
-  const editWordExperience({
-    required this.jobTitle,
-    required this.company,
-    required this.start_date,
-    required this.end_date,
-    required this.description,
-    Key? key,
-  }) : super(key: key);
+class editWorkExperience extends StatefulWidget {
+  final workExperience WorkExperience;
+  editWorkExperience({super.key, required this.WorkExperience});
 
   @override
-  State<editWordExperience> createState() => _editWordExperienceState();
+  State<editWorkExperience> createState() => _editWorkExperienceState();
 }
 
-class _editWordExperienceState extends State<editWordExperience> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class _editWorkExperienceState extends State<editWorkExperience> {
+  final controller = Get.put(workExperienceController());
 
-  late FirebaseAuth auth;
-  String? jobSeekerId;
-  late FirebaseFirestore firestore;
+  final TextEditingController JobTitle = TextEditingController();
+  final TextEditingController Company = TextEditingController();
+  final TextEditingController StartDate = TextEditingController();
+  final TextEditingController EndDate = TextEditingController();
+  final TextEditingController Description = TextEditingController();
 
-  TextEditingController jobTitleController = TextEditingController();
-  TextEditingController companyController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
-  AutovalidateMode _jobTitleAutovalidateMode = AutovalidateMode.disabled;
-  AutovalidateMode _companyAutovalidateMode = AutovalidateMode.disabled;
-  AutovalidateMode _startDateAutovalidateMode = AutovalidateMode.disabled;
-  AutovalidateMode _endDateAutovalidateMode = AutovalidateMode.disabled;
-
+  @override
   void initState() {
     super.initState();
-    auth = FirebaseAuth.instance;
-    jobSeekerId = auth.currentUser?.uid;
-
-    jobTitleController.text = widget.jobTitle;
-    companyController.text = widget.company;
-    startDateController.text = widget.start_date;
-    endDateController.text = widget.end_date;
-    descriptionController.text = widget.description;
+    Company.text = widget.WorkExperience.companyName;
+    JobTitle.text = widget.WorkExperience.title;
+    StartDate.text = widget.WorkExperience.startDate;
+    EndDate.text = widget.WorkExperience.endDate;
+    Description.text = widget.WorkExperience.description;
   }
 
+  @override
   void dispose() {
+    JobTitle.dispose();
+    Company.dispose();
+    StartDate.dispose();
+    EndDate.dispose();
+    Description.dispose();
+    formKey.currentState?.dispose();
     super.dispose();
-    jobTitleController.dispose();
-    companyController.dispose();
-    startDateController.dispose();
-    endDateController.dispose();
-    descriptionController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            padding: EdgeInsets.only(left: 15),
-            icon: Image(image: AssetImage("images/left-arrow.png")),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+    final exactWorkExperience = widget.WorkExperience.title;
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          padding: EdgeInsets.only(left: 15),
+          icon: Image(image: AssetImage("images/left-arrow.png")),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: SafeArea(
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Form(
-            key: _formKey,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Change work experience',
-                    style: GoogleFonts.dmSans(
-                      color: Color(0xFF150B3D),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Change work experience',
+                  style: GoogleFonts.dmSans(
+                    color: Color(0xFF150B3D),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
-                  // =============================================================
-                  // ======================= add job title ======================
-                  SizedBox(height: 25),
-                  Text(
-                    'Job title',
-                    style: GoogleFonts.dmSans(
-                      color: Color(0xFF150B3D),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
+                ),
+                SizedBox(height: 25),
+                Text(
+                  'Job title',
+                  style: GoogleFonts.dmSans(
+                    color: Color(0xFF150B3D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 55,
-                    padding: EdgeInsets.only(bottom: 3),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 73, 73, 73)
-                          .withOpacity(0.10000000149011612),
-                      borderRadius: const BorderRadius.all(Radius.circular(13)),
-                    ),
-                    child: TextFormField(
-                      controller: jobTitleController,
-                      autovalidateMode: _jobTitleAutovalidateMode,
-                      onChanged: (value) {
-                        setState(() {
-                          _jobTitleAutovalidateMode =
-                              AutovalidateMode.onUserInteraction;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a job title';
-                        }
-                        return null;
-                      },
-                      style: GoogleFonts.dmSans(
-                          color: Colors.black, fontWeight: FontWeight.w600),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 20),
-                      ),
-                    ),
+                ),
+                SizedBox(height: 5),
+                TextForm(
+                    JobTitle,
+                    (Value) =>
+                        workExperienceValidator.JobTitleValidator(Value)),
+                SizedBox(height: 10),
+                Text(
+                  'Company',
+                  style: GoogleFonts.dmSans(
+                    color: Color(0xFF150B3D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
-
-                  // ==================================================================
-                  // ========================== add company ==========================
-                  SizedBox(height: 15),
-                  Text(
-                    'Company',
-                    style: GoogleFonts.dmSans(
-                      color: Color(0xFF150B3D),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 55,
-                    padding: EdgeInsets.only(bottom: 3),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 73, 73, 73)
-                          .withOpacity(0.10000000149011612),
-                      borderRadius: const BorderRadius.all(Radius.circular(13)),
-                    ),
-                    child: TextFormField(
-                      controller: companyController,
-                      autovalidateMode: _companyAutovalidateMode,
-                      onChanged: (value) {
-                        setState(() {
-                          _companyAutovalidateMode =
-                              AutovalidateMode.onUserInteraction;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a the company name';
-                        }
-                        return null;
-                      },
-                      style: GoogleFonts.dmSans(
-                          color: Colors.black, fontWeight: FontWeight.w600),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 20),
-                      ),
-                    ),
-                  ),
-                  // ==============================================
-                  // =================== date =====================
-                  SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Start date',
-                              style: GoogleFonts.dmSans(
-                                color: Color(0xFF150B3D),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              height: 50,
-                              padding: EdgeInsets.only(bottom: 3),
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 73, 73, 73)
-                                    .withOpacity(0.10000000149011612),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(13)),
-                              ),
-                              child: TextFormField(
-                                controller: startDateController,
-                                autovalidateMode: _startDateAutovalidateMode,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _startDateAutovalidateMode =
-                                        AutovalidateMode.onUserInteraction;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a date';
-                                  }
-                                  return null;
-                                },
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.only(left: 20),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'End date',
-                              style: GoogleFonts.dmSans(
-                                color: Color(0xFF150B3D),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              height: 50,
-                              padding: EdgeInsets.only(bottom: 3),
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 73, 73, 73)
-                                    .withOpacity(0.10000000149011612),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(13)),
-                              ),
-                              child: TextFormField(
-                                controller: endDateController,
-                                autovalidateMode: _endDateAutovalidateMode,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _endDateAutovalidateMode =
-                                        AutovalidateMode.onUserInteraction;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a date';
-                                  }
-                                  return null;
-                                },
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.only(left: 20),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  // ===========================================================
-                  // ==================== description ===========================
-                  SizedBox(height: 15),
-                  Text(
-                    "Desciption",
-                    style: GoogleFonts.dmSans(
-                      color: Color(0xFF150B3D),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.18,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 73, 73, 73)
-                          .withOpacity(0.10000000149011612),
-                      borderRadius: const BorderRadius.all(Radius.circular(13)),
-                    ),
-                    child: TextFormField(
-                      controller: descriptionController,
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(top: 7, left: 20),
-                        hintText: 'Write additional information here',
-                        hintStyle: GoogleFonts.dmSans(
-                          color: Color.fromARGB(255, 97, 97, 97),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // ================================================================
-                  // ======================== Save , remove ===================
-                  Spacer(),
-                  Container(
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        // ========================= Remove ====================
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Confirmation(isSaveConfirmation: false);
-                              },
-                              child: Text(
-                                'Remove',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    letterSpacing: 1),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                primary: Color(0xFFD6CDFE),
-                              ),
+                ),
+                SizedBox(height: 5),
+                TextForm(Company,
+                    (Value) => workExperienceValidator.CompanyValidator(Value)),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Start Date',
+                            style: GoogleFonts.dmSans(
+                              color: Color(0xFF150B3D),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 15),
-
-                        // ========================== save =======================
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Confirmation(isSaveConfirmation: true);
-                              },
-                              child: Text(
-                                'Save',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    letterSpacing: 1),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                primary: Colors.black,
-                              ),
+                          SizedBox(height: 5),
+                          TextForm(
+                              StartDate,
+                              (Value) =>
+                                  workExperienceValidator.StartDateValidato(
+                                      Value)),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'End Date',
+                            style: GoogleFonts.dmSans(
+                              color: Color(0xFF150B3D),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 5),
+                          TextForm(
+                              EndDate,
+                              (Value) =>
+                                  workExperienceValidator.EndDateValidato(
+                                      Value)),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Description',
+                  style: GoogleFonts.dmSans(
+                    color: Color(0xFF150B3D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.18,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 73, 73, 73)
+                        .withOpacity(0.10000000149011612),
+                    borderRadius: const BorderRadius.all(Radius.circular(13)),
+                  ),
+                  child: TextFormField(
+                    controller: Description,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(top: 7, left: 20),
+                      hintText: 'Write additional information here',
+                      hintStyle: GoogleFonts.dmSans(
+                        color: Color.fromARGB(255, 97, 97, 97),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 15)
-                ],
-              ),
+                ),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    // ========================= Remove ====================
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 8),
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Confirmation(context, controller,
+                                exactWorkExperience, formKey,
+                                isSaveConfirmation: false);
+                          },
+                          child: Text(
+                            'Remove',
+                            style: GoogleFonts.dmSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 1),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            backgroundColor: Color(0xFFD6CDFE),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 15),
+
+                    // ========================== save =======================
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 8),
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Confirmation(context, controller,
+                                exactWorkExperience, formKey,
+                                isSaveConfirmation: true);
+                          },
+                          child: Text(
+                            'Save',
+                            style: GoogleFonts.dmSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 1),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            backgroundColor: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -397,57 +256,39 @@ class _editWordExperienceState extends State<editWordExperience> {
     );
   }
 
-  void _updateWorkExperience() async {
-    if (_formKey.currentState!.validate()) {
-      var querySnapshot = await FirebaseFirestore.instance
-          .collection("Job_seekers")
-          .doc(jobSeekerId)
-          .collection("workExperiences")
-          .where('title', isEqualTo: widget.jobTitle)
-          .get();
-
-      var documentID = querySnapshot.docs.first.id;
-
-      await FirebaseFirestore.instance
-          .collection("Job_seekers")
-          .doc(jobSeekerId)
-          .collection("workExperiences")
-          .doc(documentID)
-          .update({
-        'title': jobTitleController.text,
-        'company': companyController.text,
-        'Start_date': startDateController.text,
-        'End_date': endDateController.text,
-        'description': descriptionController.text,
-      });
-
-      Navigator.push(
-          context,
-          PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: BottomNavigationBarJobseekerApp()));
-    }
+  TextFormField TextForm(TextEditingController controller, final Validate) {
+    return TextFormField(
+      style: TextStyle(
+        color: Colors.black,
+      ),
+      controller: controller,
+      validator: Validate,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintStyle:
+            const TextStyle(fontFamily: 'Futura', color: Color(0xFF3B3B3B)),
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.10000000149011612),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(13)),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(13)),
+        errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red.withOpacity(0.4)),
+            borderRadius: BorderRadius.circular(13)),
+        focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red.withOpacity(0.4)),
+            borderRadius: BorderRadius.circular(13)),
+        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      ),
+    );
   }
 
-  void deleteWorkExperience() async {
-    var querySnapshot = await FirebaseFirestore.instance
-        .collection("Job_seekers")
-        .doc(jobSeekerId)
-        .collection("workExperiences")
-        .where('title', isEqualTo: widget.jobTitle)
-        .get();
-
-    var documentID = querySnapshot.docs.first.id;
-    await FirebaseFirestore.instance
-        .collection("Job_seekers")
-        .doc(jobSeekerId)
-        .collection("workExperiences")
-        .doc(documentID)
-        .delete();
-  }
-
-  // ========== confirmation bar ============
-  void Confirmation({bool isSaveConfirmation = true}) {
+  void Confirmation(BuildContext context, workExperienceController controller,
+      String ExactWorkExperience, final formKey,
+      {bool isSaveConfirmation = true}) {
     String title;
     String description;
     String confirm;
@@ -513,14 +354,28 @@ class _editWordExperienceState extends State<editWordExperience> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (isSaveConfirmation) {
-                      _updateWorkExperience();
+                      // check if the form is valid
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
+                      workExperience WorkExperience = workExperience(
+                        companyName: JobTitle.text,
+                        title: JobTitle.text,
+                        startDate: StartDate.text,
+                        endDate: EndDate.text,
+                        description: Description.text,
+                      );
+                      controller.updateWorkExperience(
+                          context, ExactWorkExperience, WorkExperience);
                     } else {
-                      deleteWorkExperience();
+                      controller.deleteWorkExperience(
+                          context, ExactWorkExperience);
                     }
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BottomNavigationBarJobseekerApp()),
+                          builder: (context) =>
+                              BottomNavigationBarJobseeker(wantedPage: 4)),
                     );
                   },
                   child: Text(
@@ -535,7 +390,7 @@ class _editWordExperienceState extends State<editWordExperience> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                   ),
                 ),
               ),
@@ -558,7 +413,7 @@ class _editWordExperienceState extends State<editWordExperience> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    primary: Color(0xFFD7CDFF),
+                    backgroundColor: Color(0xFFD7CDFF),
                   ),
                 ),
               ),

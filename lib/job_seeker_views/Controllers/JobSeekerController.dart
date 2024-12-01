@@ -8,6 +8,7 @@ class JobSeekerController extends GetxController {
 
   Rx<Job_seeker> jobSeeker = Job_seeker.emptyJobseeker().obs;
   final userRepo = Get.put(UserRepository());
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -17,13 +18,16 @@ class JobSeekerController extends GetxController {
 
   Future<void> fetchJobSeekersRecord() async {
     try {
+      isLoading.value = true;
       final jobSeeker = await userRepo.getJobSeekerData();
-      
+
       if (jobSeeker != this.jobSeeker.value) {
         this.jobSeeker(jobSeeker);
       }
     } catch (e) {
       Job_seeker.emptyJobseeker();
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -40,7 +44,7 @@ class JobSeekerController extends GetxController {
       // update user record
       Map<String, dynamic> json = {'picture': imageUrl};
 
-      await userRepo.updatesinglefield(json);
+      await userRepo.updatesinglefield("Job_seekers",json);
 
       jobSeeker.value.profilePicture = imageUrl;
       jobSeeker.refresh();

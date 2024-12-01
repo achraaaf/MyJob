@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/JobSeekerNavigationBar.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NoJobsSavedWidget extends StatelessWidget {
@@ -19,7 +19,7 @@ class NoJobsSavedWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 25),
               child: Text(
-                "No Savings",
+                "Vide",
                 style: GoogleFonts.poppins(
                   color: Colors.black,
                   fontSize: 22,
@@ -29,7 +29,7 @@ class NoJobsSavedWidget extends StatelessWidget {
               ),
             ),
             Text(
-              "You don't have any jobs saved, please find it in search to save jobs",
+              "Vous n'avez aucune emploi sauvegardé, veuillez le trouver dans la recherche pour sauvegarder des emplois",
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 color: Colors.black,
@@ -40,7 +40,7 @@ class NoJobsSavedWidget extends StatelessWidget {
             Image(image: AssetImage("images/SavingNo.png")),
             Center(
               child: Container(
-                height: 60,
+                height: 50,
                 width: MediaQuery.of(context).size.width * 0.6,
                 child: ElevatedButton(
                   onPressed: () {
@@ -58,11 +58,11 @@ class NoJobsSavedWidget extends StatelessWidget {
                     backgroundColor: Color.fromARGB(255, 17, 17, 17),
                   ),
                   child: Text(
-                    'Find a Job',
+                    'Trouver un emploi',
                     style: GoogleFonts.dmSans(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 18,
                         letterSpacing: 1),
                   ),
                 ),

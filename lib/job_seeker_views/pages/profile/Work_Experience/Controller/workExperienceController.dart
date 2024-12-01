@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Authentication/Auth_Repository/authentication_Repository.dart';
-import 'package:flutter_application_1/job_seeker_views/job_seeker_Home.dart';
+import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
+import 'package:MyJob/job_seeker_views/Controllers/JobSeekerController.dart';
+import 'package:MyJob/Models/Job_seeker/workExperience.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
 import 'package:get/get.dart';
-import 'package:page_transition/page_transition.dart';
 
 class workExperienceController extends GetxController {
   static workExperienceController get instance => Get.find();
@@ -15,9 +15,9 @@ class workExperienceController extends GetxController {
   TextEditingController StartDate = TextEditingController();
   TextEditingController EndDate = TextEditingController();
   TextEditingController Description = TextEditingController();
-  GlobalKey<FormState> WorkExperienceFormKey = GlobalKey<FormState>();
 
-  final authRepo = Get.put(AuthenticationRepository());
+  final authRepo = AuthenticationRepository.instance;
+  final JobseekerController = JobSeekerController.instance;
 
   addWorkExperience(BuildContext context, Map<String, dynamic> data,
       GlobalKey<FormState> formKey) async {
@@ -32,6 +32,10 @@ class workExperienceController extends GetxController {
         .collection("workExperiences")
         .add(data);
 
+    // update the Rx job seeker values
+    JobseekerController.jobSeeker.value.workExperiences
+        .add(workExperience.fromJson(data));
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -40,11 +44,7 @@ class workExperienceController extends GetxController {
   }
 
   updateWorkExperience(BuildContext context, String ExactJobTitle,
-      GlobalKey<FormState> formKey) async {
-    if (!formKey.currentState!.validate()) {
-      return;
-    }
-
+      workExperience WorkEperience) async {
     var querySnapshot = await FirebaseFirestore.instance
         .collection("Job_seekers")
         .doc(authRepo.authUser!.uid)
@@ -52,32 +52,36 @@ class workExperienceController extends GetxController {
         .where('title', isEqualTo: ExactJobTitle)
         .get();
 
-      var documentID = querySnapshot.docs.first.id;
+    var documentID = querySnapshot.docs.first.id;
 
-      print(JobTitle.text);
-      print(Company);
-      print(StartDate);
-      print(EndDate);
-      print(Description);
+    await FirebaseFirestore.instance
+        .collection("Job_seekers")
+        .doc(authRepo.authUser!.uid)
+        .collection("workExperiences")
+        .doc(documentID)
+        .update(WorkEperience.toJson());
+    // update the jobseeker data
+    JobseekerController.fetchJobSeekersRecord();
+  }
 
-      await FirebaseFirestore.instance
-          .collection("Job_seekers")
-          .doc(authRepo.authUser!.uid)
-          .collection("workExperiences")
-          .doc(documentID)
-          .update({
-        'title': JobTitle.text,
-        'company': Company.text,
-        'Start_date': StartDate.text,
-        'End_date': EndDate.text,
-        'description': Description.text,
-      });
+  deleteWorkExperience(BuildContext context, String ExactJobTitle) async {
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection("Job_seekers")
+        .doc(authRepo.authUser!.uid)
+        .collection("workExperiences")
+        .where('title', isEqualTo: ExactJobTitle)
+        .get();
 
-      Navigator.push(
-          context,
-          PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: BottomNavigationBarJobseeker(wantedPage: 4)));
-    }
+    var documentID = querySnapshot.docs.first.id;
+
+    await FirebaseFirestore.instance
+        .collection("Job_seekers")
+        .doc(authRepo.authUser!.uid)
+        .collection("workExperiences")
+        .doc(documentID)
+        .delete();
+
+    // update the jobseeker data
+    JobseekerController.fetchJobSeekersRecord();
   }
 }

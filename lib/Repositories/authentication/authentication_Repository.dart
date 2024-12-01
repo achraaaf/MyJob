@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/Authentication/OnboardingScreen.dart';
-import 'package:flutter_application_1/Authentication/SignIn_Up.dart';
-import 'package:flutter_application_1/Repositories/user/User_Repository.dart';
-import 'package:flutter_application_1/employer_screens/Employer_Home.dart';
-import 'package:flutter_application_1/job_seeker_views/job_seeker_Home.dart';
+import 'package:MyJob/Authentication/OnboardingScreen.dart';
+import 'package:MyJob/Authentication/SignIn_Up.dart';
+import 'package:MyJob/employer_screens/Employer_Home.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -25,8 +24,6 @@ class AuthenticationRepository extends GetxController {
   void screenRedirect() async {
     final currentUser = _auth.currentUser;
 
-    print("====================== $currentUser =======================");
-
     if (currentUser != null) {
       late String userType;
 
@@ -36,7 +33,6 @@ class AuthenticationRepository extends GetxController {
           .get();
       if (userDocument.exists) {
         userType = userDocument.data()!['role'].toString();
-        print("==================== $userType =======================");
       }
 
       if (userType == 'job_seeker') {
@@ -48,7 +44,7 @@ class AuthenticationRepository extends GetxController {
       // Local storage
       deviceStorage.writeIfNull('isFirstTime', true);
       deviceStorage.read('isFirstTime') != true
-          ? Get.offAll((() => signin_up()))
+          ? Get.offAll(() => signin_up())
           : Get.offAll(() => OnboardingScreen());
     }
   }

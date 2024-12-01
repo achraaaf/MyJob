@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Repositories/user/User_Repository.dart';
-import 'package:flutter_application_1/Controllers/JobSeekerController.dart';
-import 'package:flutter_application_1/job_seeker_views/job_seeker_Home.dart';
+import 'package:MyJob/Repositories/user/User_Repository.dart';
+import 'package:MyJob/job_seeker_views/Controllers/JobSeekerController.dart';
 import 'package:get/get.dart';
-import 'package:page_transition/page_transition.dart';
 
 class editProfileController extends GetxController {
   static editProfileController get instance => Get.find();
@@ -19,25 +17,24 @@ class editProfileController extends GetxController {
   final userRepo = UserRepository.Instance;
   final JobSeekerData = JobSeekerController.instance;
 
-  SaveChanges(BuildContext context , GlobalKey<FormState> formKey) async {
+  SaveChanges(BuildContext context, GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) {
       return;
     }
 
-    Map<String, dynamic> data = {
+    userRepo.updatesinglefield("Job_seekers", {
       'name': nameController.text,
       'city': cityController.text,
-    };
-    userRepo.updatesinglefield(data);
-    userRepo.updateOnUserCollection(data);
+      'phone': phoneController.text,
+    });
+    userRepo.updateOnUserCollection({
+      'name': nameController.text,
+      'city': cityController.text,
+    });
 
     JobSeekerData.jobSeeker.value.name = nameController.text;
     JobSeekerData.jobSeeker.value.city = cityController.text;
+    JobSeekerData.jobSeeker.value.phone = phoneController.text;
 
-    Navigator.push(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRight,
-            child: BottomNavigationBarJobseeker(wantedPage: 4)));
   }
 }

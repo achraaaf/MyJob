@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:MyJob/Helper/Data.dart';
 import 'package:MyJob/Models/JobPosts/JobPostModel.dart';
 import 'package:MyJob/Repositories/JobPost/JobPostsRepository.dart';
@@ -95,6 +97,8 @@ class ManagePostsController extends GetxController {
       isLoadingEditing.value = false;
     }
   }
+
+  
 
   void deleteJobPost(String JobPostId) async {
     await jobPostRepo.DeleteJobPost(JobPostId);

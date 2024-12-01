@@ -1,18 +1,22 @@
+import 'package:MyJob/Helper/Data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Controllers/JobSeekerController.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/profile/EditProfile/controller/editProfileController.dart';
-import 'package:flutter_application_1/utils/validators/SignUpValidation.dart';
-import 'package:get/get.dart';
+import 'package:MyJob/job_seeker_views/Controllers/JobSeekerController.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
+import 'package:MyJob/job_seeker_views/pages/profile/EditProfile/controller/editProfileController.dart';
+import 'package:MyJob/utils/validators/SignUpValidation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 class EditProfileForm extends StatefulWidget {
   final name;
   final city;
+  final phone;
 
   const EditProfileForm({
     required this.name,
     required this.city,
-    super.key,
+    required this.phone,
+    Key? key,
   });
 
   @override
@@ -30,6 +34,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
     super.initState();
     controller.nameController.text = widget.name;
     controller.cityController.text = widget.city;
+    controller.phoneController.text = widget.phone;
   }
 
   @override
@@ -42,7 +47,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Full Name',
+              'Nom complet',
               style: GoogleFonts.dmSans(
                 color: Color(0xFF150B3D),
                 fontSize: 14,
@@ -54,7 +59,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 validator: (Value) => Validation.ValidateName(Value)),
             SizedBox(height: 10),
             Text(
-              'Date of birthday',
+              'Emplacement',
               style: GoogleFonts.dmSans(
                 color: Color(0xFF150B3D),
                 fontSize: 14,
@@ -62,10 +67,34 @@ class _EditProfileFormState extends State<EditProfileForm> {
               ),
             ),
             SizedBox(height: 5),
-            TextField(controller.DateBirthday),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.black.withOpacity(0.1),
+              ),
+              child: DropdownButton<String>(
+                value: controller.cityController.text,
+                borderRadius: BorderRadius.circular(15),
+                focusColor: Colors.white,
+                iconEnabledColor: Colors.black,
+                underline: SizedBox.shrink(),
+                items: Data.cities
+                    .map((city) => DropdownMenuItem<String>(
+                          value: city,
+                          child: Text(city),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    controller.cityController.text = value!;
+                  });
+                },
+              ),
+            ),
             SizedBox(height: 10),
             Text(
-              'Gender',
+              'Genre',
               style: GoogleFonts.dmSans(
                 color: Color(0xFF150B3D),
                 fontSize: 14,
@@ -79,10 +108,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.black.withOpacity(0.10000000149011612),
+                      color: Colors.black.withOpacity(0.1),
                     ),
                     child: RadioListTile(
-                      title: Text("Male"),
+                      title: Text("Homme"),
                       value: "Male",
                       groupValue: _gender,
                       onChanged: (val) {
@@ -98,10 +127,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.black.withOpacity(0.10000000149011612),
+                      color: Colors.black.withOpacity(0.1),
                     ),
                     child: RadioListTile(
-                      title: Text("Female"),
+                      title: Text("Femme"),
                       value: "Female",
                       groupValue: _gender,
                       onChanged: (val) {
@@ -116,7 +145,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             ),
             SizedBox(height: 10),
             Text(
-              'Phone Number',
+              'Numéro de téléphone',
               style: GoogleFonts.dmSans(
                 color: Color(0xFF150B3D),
                 fontSize: 14,
@@ -125,18 +154,6 @@ class _EditProfileFormState extends State<EditProfileForm> {
             ),
             SizedBox(height: 5),
             TextField(controller.phoneController),
-            SizedBox(height: 10),
-            Text(
-              'Location',
-              style: GoogleFonts.dmSans(
-                color: Color(0xFF150B3D),
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(controller.cityController,
-                validator: (Value) => Validation.ValidateLocation(Value)),
             SizedBox(height: 30),
             Center(
               child: Container(
@@ -145,6 +162,12 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 child: ElevatedButton(
                   onPressed: () {
                     controller.SaveChanges(context, _editprofileKey);
+                    Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.leftToRight,
+                            child:
+                                BottomNavigationBarJobseeker(wantedPage: 4)));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -153,7 +176,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                     backgroundColor: Colors.black,
                   ),
                   child: Text(
-                    'Save',
+                    'Enregistrer',
                     style: GoogleFonts.dmSans(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -180,7 +203,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
       decoration: InputDecoration(
         border: InputBorder.none,
         filled: true,
-        fillColor: Colors.black.withOpacity(0.10000000149011612),
+        fillColor: Colors.black.withOpacity(0.1),
         enabledBorder: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(13)),

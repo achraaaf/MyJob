@@ -1,11 +1,14 @@
+import 'package:MyJob/job_seeker_views/Home/Controller/JobPostController.dart';
+import 'package:MyJob/job_seeker_views/Home/view/NotificationsView.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Controllers/JobSeekerController.dart';
-import 'package:flutter_application_1/Repositories/authentication/authentication_Repository.dart';
-import 'package:flutter_application_1/job_seeker_views/Home/Controller/JobPostController.dart';
-import 'package:flutter_application_1/job_seeker_views/Home/widgets/RecentJobsWidget.dart';
-import 'package:flutter_application_1/job_seeker_views/Home/widgets/popularJobsWidget.dart';
+import 'package:MyJob/job_seeker_views/Controllers/JobSeekerController.dart';
+import 'package:MyJob/job_seeker_views/Home/Controller/savedJobPostsController.dart';
+import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
+import 'package:MyJob/job_seeker_views/Home/widgets/FilterPosts.dart';
+import 'package:MyJob/job_seeker_views/Home/widgets/RecentJobsWidget.dart';
+import 'package:MyJob/job_seeker_views/Home/widgets/filterProperities.dart';
+import 'package:MyJob/job_seeker_views/Home/widgets/popularJobsWidget.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -16,23 +19,30 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-final controller = Get.put(JobSeekerController());
-final auth = AuthenticationRepository.instance;
-
 class _HomeScreenState extends State<HomeScreen> {
+  late final JobSeekerController controller;
+  late final savedJobPostsController savedJobController;
+  late final JobPostController jobPostController;
+  final auth = AuthenticationRepository.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(JobSeekerController());
+    savedJobController = Get.put(savedJobPostsController());
+    jobPostController = Get.put(JobPostController());
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("============== im here ===============");
-    print(controller.jobSeeker.value.name);
-    print(auth.authUser!.uid);
-
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            setState(() {});
+            jobPostController.fetchJobPosts();
           },
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Obx(() {
               final jobSeeker = controller.jobSeeker.value;
 
@@ -46,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Row(
-                      // =============== header ===================
+                      // =============== en-tête ===================
                       children: [
                         CircleAvatar(
                           radius: 35,
@@ -65,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Row(
                               children: [
                                 Text(
-                                  "Good Morning",
+                                  "Bonjour",
                                   style: GoogleFonts.inter(
                                     color: Color(0xFF585858),
                                     fontSize: 16,
@@ -91,35 +101,54 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         Spacer(),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Color(0xFFDEDEDE),
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: Color(0xFFDEDEDE),
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(100),
+                                ),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  Get.to(() => NotificationsView());
+                                },
+                                icon: Icon(
+                                  Iconsax.notification,
+                                  size: 33,
+                                ),
+                              ),
                             ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(100),
-                            ),
-                          ),
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Iconsax.notification,
-                              size: 33,
-                            ),
-                          ),
+                            if (jobPostController.isNewNoti.value)
+                              Positioned(
+                                top: 10,
+                                right: 14,
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  // ================== End header ===================
+                  // ================== Fin en-tête ===================
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Let's Find Your",
+                      "Trouvons votre",
                       style: GoogleFonts.poppins(
                           color: Colors.black,
-                          fontSize: 35,
+                          fontSize: 32,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -1.7),
                     ),
@@ -127,16 +156,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Dream Job!",
+                      "Emploi de rêve !",
                       style: GoogleFonts.poppins(
                           color: Colors.black,
-                          fontSize: 35,
+                          fontSize: 33,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -1.4),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  //====================== search bar ====================
+                  SizedBox(height: 10),
+                  //====================== barre de recherche ====================
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Container(
@@ -152,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: TextField(
                         decoration: InputDecoration(
-                            hintText: "Search Your Dream!",
+                            hintText: "Recherchez votre rêve !",
                             hintStyle: GoogleFonts.poppins(
                               fontSize: 16,
                               letterSpacing: -0.5,
@@ -167,7 +196,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Color(0xFF181F32),
                                   borderRadius: BorderRadius.circular(15)),
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FilterPosts(),
+                                      ),
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            filterPropertiesWidget(),
+                                      ),
+                                    );
+                                  },
                                   icon: Icon(
                                     Iconsax.filter_search,
                                     color: Colors.white,
@@ -180,27 +223,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(15)),
                             contentPadding: EdgeInsets.symmetric(
-                                horizontal: 13, vertical: 20)),
+                                horizontal: 13, vertical: 16)),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FilterPosts(),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      "Popular Jobs",
+                      "Emplois populaires",
                       style: GoogleFonts.poppins(
                           color: Colors.black,
-                          fontSize: 28,
+                          fontSize: 24,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -1.5),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 5),
 
-                  //================== popular jobs listview ====================
+                  //================== liste des emplois populaires ====================
                   PopularJobsWidget(),
-                  // ================== Recent Job Posts ====================
+                  // ================== Emplois récents ====================
                   RecentJobsWidget(),
                 ],
               );

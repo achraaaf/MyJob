@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/job_seeker_views/Home/Controller/savedJobPostsController.dart';
-import 'package:flutter_application_1/Repositories/authentication/authentication_Repository.dart';
-import 'package:flutter_application_1/job_seeker_views/JobSeekerNavigationBar.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/savedJobs/widgets/NoSavedJobsWidget.dart';
-import 'package:flutter_application_1/job_seeker_views/pages/savedJobs/widgets/buildSavedPosts.dart';
+import 'package:MyJob/job_seeker_views/Home/Controller/savedJobPostsController.dart';
+import 'package:MyJob/Repositories/authentication/authentication_Repository.dart';
+import 'package:MyJob/job_seeker_views/JobSeekerNavigationBar.dart';
+import 'package:MyJob/job_seeker_views/pages/savedJobs/widgets/NoSavedJobsWidget.dart';
+import 'package:MyJob/job_seeker_views/pages/savedJobs/widgets/buildSavedPosts.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SavedJobs extends StatelessWidget {
@@ -17,7 +18,7 @@ class SavedJobs extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Saved Jobs",
+          "Emplois enregistrés",
           style: GoogleFonts.poppins(
             color: Colors.black,
             fontSize: 22,
@@ -40,18 +41,25 @@ class SavedJobs extends StatelessWidget {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (controller.savedJobPosts.length == 0) NoJobsSavedWidget(),
-                if (controller.savedJobPosts.length != 0)
-                  buildSavedPosts(controller: controller, authRepo: authRepo),
-              ],
-            ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              Obx(() {
+                if (controller.savedJobPosts.length == 0) {
+                  return NoJobsSavedWidget();
+                }
+                ;
+                if (controller.savedJobPosts.length != 0) {
+                  return buildSavedPosts(
+                      controller: controller, authRepo: authRepo);
+                }
+                return SizedBox.shrink();
+              })
+            ],
           ),
         ),
       ),

@@ -6,7 +6,7 @@ import 'package:iconsax/iconsax.dart';
 
 class ProfileHeader extends StatelessWidget {
   ProfileHeader({
-    super.key,
+    Key? key,
   });
 
   final controller = EmployerController.instance;
@@ -99,7 +99,7 @@ class ProfileHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Company Size',
+                        'Taille de l\'entreprise',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(employer.companySize),
@@ -111,7 +111,7 @@ class ProfileHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Industry',
+                        'Industrie',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(employer.Industry),
@@ -123,7 +123,7 @@ class ProfileHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Contact Information',
+                        'Informations de contact',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(employer.email),
@@ -142,7 +142,7 @@ class ProfileHeader extends StatelessWidget {
             ),
             SizedBox(height: 7),
             Text(
-              "About",
+              "À propos",
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   color: Colors.black,

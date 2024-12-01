@@ -1,5 +1,13 @@
-
 class Validation {
+  Validation(String text);
+
+  static String? ValidateField(String field ,String? value){
+    if(value == null || value.isEmpty){
+      return "$field is required";
+    }
+    return null;
+  }
+
   static String? ValidateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Name is required';
@@ -7,16 +15,14 @@ class Validation {
     return null;
   }
 
-  static String? ValidateEmail(String? value, bool isAlreadyUsed) {
+  static String? ValidateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
     if (!value.contains('@')) {
       return 'Invalid email';
     }
-    if (isAlreadyUsed = true) {
-      return "Email is already in use";
-    }
+
     return null;
   }
 
@@ -27,6 +33,7 @@ class Validation {
     if (value.length < 6) {
       return 'Password must be at least 6 characters';
     }
+
     return null;
   }
 
@@ -39,6 +46,13 @@ class Validation {
       return 'Passwords do not match';
     }
 
+    return null;
+  }
+
+  static String? ValidateLocation(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Location is required';
+    }
     return null;
   }
 }

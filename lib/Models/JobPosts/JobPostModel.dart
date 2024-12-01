@@ -7,7 +7,7 @@ class JobPostModel {
   String jobLocation;
   List jobType;
   String jobSalary;
-  String PostedDate;
+  Timestamp PostedDate;
   String employerId;
   String employerName;
   String EmployerImage;
@@ -42,7 +42,7 @@ class JobPostModel {
         jobLocation: "",
         jobType: [],
         jobSalary: "",
-        PostedDate: "",
+        PostedDate: Timestamp.now(),
         employerId: "",
         employerName: "",
         EmployerImage: "",
@@ -77,25 +77,6 @@ class JobPostModel {
     );
   }
 
-  factory JobPostModel.fromJson(Map<String, dynamic> json) {
-    return JobPostModel(
-      id: json['id'] ?? "",
-      jobTitle: json['jobTitle'] ?? "",
-      jobDescription: json['jobDescription'] ?? "",
-      jobLocation: json['jobLocation'] ?? "",
-      jobType: json['jobType'] ?? [],
-      jobSalary: json['jobSalary'] ?? "",
-      PostedDate: json['PostedDate'] ?? "",
-      employerId: json['employerId'] ?? "",
-      employerName: json['employerName'] ?? "",
-      EmployerImage: json['EmployerImage'] ?? "",
-      RequiredSkills: json['RequiredSkills'] ?? [],
-      Requirement: json['Requirement'] ?? '',
-      Photos: json['Photos'] ?? [],
-      JobCategory: json['JobCategory'] ?? '',
-      isPopular: json['isPopular'] ?? false,
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
