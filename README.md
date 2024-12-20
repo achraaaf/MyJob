@@ -1,18 +1,13 @@
-# MyJob
+# MyJob Mobile App
 
-A new Flutter project.
+MyJob is a mobile application developed using **Flutter**, **Dart**, and **Firebase**. The app is designed to help users manage job applications, track their job search progress, and provide useful features such as job posting integration and resume management.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# MyJob" 
-"# MyJob" 
+- **User Authentication:** Secure login and sign-up process using Firebase Authentication.
+- **Job Listings:** View available job postings with details such as job title, company, location, and description.
+- **Resume Management:** Upload and store resumes in the app, and easily apply for jobs with a single click.
+- **Application Tracking:** Keep track of job applications, including application status and deadlines.
+- **Firestore:** Cloud Firestore for storing and managing user data, job listings, and application statuses.
+- **Firebase Storage:** Used for storing and retrieving user-uploaded resumes and documents.
+- **Firebase Cloud Messaging:** For sending push notifications to users regarding new job postings and application updates.
